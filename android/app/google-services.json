@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "333896477204",
+    "project_id": "ussage-app",
+    "storage_bucket": "ussage-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333896477204:android:86a98b1b2f8081dc1c1501",
+        "android_client_info": {
+          "package_name": "com.example.ussage_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "333896477204-h93u1tdhp03pllri13k7socjk1qv94o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpUDdigjVCjF4eTln1fBZDcmMYZUUZNU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "333896477204-h93u1tdhp03pllri13k7socjk1qv94o1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
