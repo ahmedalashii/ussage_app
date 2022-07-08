@@ -1,17 +1,17 @@
 import 'package:ussage_app/app/modules/single_chat/controllers/single_chat_controller.dart';
+import 'package:ussage_app/app/routes/app_pages.dart';
 import 'package:ussage_app/generated/locales.g.dart';
 
 import '../../../../../constants/exports.dart';
-import '../../../../data/models/chat.dart';
-import '../../../../routes/app_pages.dart';
+import '../../../../data/models/user.dart';
 
 class CustomSingleChatAppBar extends GetView<SingleChatController> {
   const CustomSingleChatAppBar({
     Key? key,
-    required this.chat,
+    required this.user,
   }) : super(key: key);
 
-  final Chat chat;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class CustomSingleChatAppBar extends GetView<SingleChatController> {
       children: [
         IconButton(
           onPressed: () {
-            Get.offNamed(Routes.HOME);
+            Get.toNamed(Routes.HOME);
           },
           icon: Icon(
             Icons.arrow_back_ios_rounded,
@@ -36,8 +36,8 @@ class CustomSingleChatAppBar extends GetView<SingleChatController> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
                 image: DecorationImage(
-                  image: AssetImage(
-                      chat.user.imageUrl),
+                  image: NetworkImage(
+                      user.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -47,12 +47,12 @@ class CustomSingleChatAppBar extends GetView<SingleChatController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PrimaryText(
-                  chat.user.name,
+                  user.name,
                   color: ColorManager.black,
                   fontSize: 20,
                 ),
                 PrimaryText(
-                  (chat.user.connectionStatus) ? LocaleKeys.online.tr : LocaleKeys.not_online.tr,
+                  (user.connectionStatus) ? LocaleKeys.online.tr : LocaleKeys.not_online.tr,
                   color: ColorManager.primary,
                   fontSize: 18,
                 ),

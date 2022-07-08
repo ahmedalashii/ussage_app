@@ -1,34 +1,46 @@
+import 'package:ussage_app/app/core/helper_functions.dart';
+
 import '../../../constants/exports.dart';
-import 'user.dart';
+
+class MessageField {
+  static const String createdAt = 'createdAt';
+}
 
 class Message {
-  late String id;
-  final DateTime sendingTime;
+  late String senderIdUser;
+  late String receiverIdUser;
+  final DateTime createdAt;
   final String text;
-  final User sender;
+  bool isRead;
   Size size;
   Message({
-    required this.sendingTime,
+    required this.senderIdUser,
+    required this.receiverIdUser,
+    required this.createdAt,
     required this.text,
-    required this.sender,
-    this.id = "0",
+    this.isRead = false,
     this.size = const Size(0, 0),
   });
 
   Map<String, dynamic> toJSON() {
     Map<String, dynamic> map = <String, dynamic>{};
-    map["sendingTime"] = sendingTime;
+    map["senderIdUser"] = senderIdUser;
+    map["receiverIdUser"] = receiverIdUser;
+    map["createdAt"] = createdAt.toIso8601String();
     map["text"] = text;
-    map["sender"] = sender.toJSON();
+    map["isRead"] = isRead;
     return map;
   }
 
-  Message fromJSON(Map<String, dynamic> json) {
+  static Message fromJSON(Map<String, dynamic> json) {
     return Message(
-      id: json["id"],
-      sendingTime: json["sendingTime"],
+      isRead: json["isRead"],
+      senderIdUser: json["senderIdUser"],
+      receiverIdUser: json["receiverIdUser"],
+      createdAt: (json["createdAt"].runtimeType == String)
+          ? DateTime.parse(json['createdAt'] as String)
+          : toDateTime(json["createdAt"])!,
       text: json["text"],
-      sender: json["sender"],
     );
   }
 }

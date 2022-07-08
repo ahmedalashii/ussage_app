@@ -1,8 +1,7 @@
 import 'package:ussage_app/app/data/cache_helper.dart';
-import 'package:ussage_app/app/firebase_controllers/firebase_auth_controller.dart';
+import 'package:ussage_app/app/firebase_helpers/firebase_auth_helper.dart';
 import 'package:ussage_app/app/modules/home/controllers/home_controller.dart';
 import 'package:ussage_app/app/routes/app_pages.dart';
-import 'package:ussage_app/constants/dummy.dart' as dummy;
 
 import '../../../../../constants/exports.dart';
 import '../../../../../generated/locales.g.dart';
@@ -50,22 +49,23 @@ class HomeMenuDrawer extends GetView<HomeController> {
                       height: 92.h,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //     offset: const Offset(0, 5),
-                        //     color: ColorManager.grey.withOpacity(0.4),
-                        //     blurRadius: 10,
-                        //     spreadRadius: 5,
-                        //   ),
-                        // ],
+                        boxShadow: [
+                          BoxShadow(
+                            offset: const Offset(0, 5),
+                            color: ColorManager.grey.withOpacity(0.4),
+                            blurRadius: 10,
+                            spreadRadius: 5,
+                          ),
+                        ],
                         image: DecorationImage(
-                            image: AssetImage(dummy.currentUser.imageUrl),
+                            image:
+                                NetworkImage(CacheController.instance.getCachedLoggedInUser()!.imageUrl),
                             fit: BoxFit.cover),
                       ),
                     ),
                     SizedBox(width: 15.w),
                     PrimaryText(
-                      "${dummy.currentUser.name.split(" ")[0]}\n${dummy.currentUser.name.split(" ")[1]}",
+                      "${CacheController.instance.getCachedLoggedInUser()!.name.split(" ")[0]}\n${CacheController.instance.getCachedLoggedInUser()!.name.split(" ")[1]}",
                       color: ColorManager.primary,
                       fontSize: 25,
                     ),
@@ -169,9 +169,10 @@ class HomeMenuDrawer extends GetView<HomeController> {
                 SizedBox(height: 20.h),
                 GestureDetector(
                   onTap: () async {
-                    await FirebaseAuthController().signOut();
-                    Get.offAllNamed(Routes.LOGIN);
-                    CacheController.instance.removeUserEmail();
+                    await FirebaseAuthHelper().signOut();
+                    Get.offNamed(Routes.LOGIN);
+                    CacheController.instance.setAuthed(false);
+                    CacheController.instance.removeCachedLoggedInUser();
                   },
                   child: Row(
                     children: [

@@ -17,7 +17,7 @@ void main() async {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: "Ussage App",
-          initialRoute: (CacheController.instance.getUserEmail() == "")
+          initialRoute: (CacheController.instance.authenticated() == false)
               ? AppPages.INITIAL
               : Routes.HOME,
           theme: getApplicationTheme(),

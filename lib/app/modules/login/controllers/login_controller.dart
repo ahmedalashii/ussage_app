@@ -1,7 +1,9 @@
 import 'package:ussage_app/app/data/cache_helper.dart';
+import 'package:ussage_app/app/firebase_helpers/firebase_auth_helper.dart';
+import 'package:ussage_app/app/firebase_helpers/firebase_firestore_helper.dart';
 
 import '../../../../constants/exports.dart';
-import '../../../firebase_controllers/firebase_auth_controller.dart';
+import '../../../data/models/user.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
@@ -22,12 +24,19 @@ class LoginController extends GetxController {
   }
 
   Future<void> login() async {
-    bool status = await FirebaseAuthController().signIn(
-        email: emailTextController.text, password: passwordTextController.text);
-    if (status) {
-      Get.offNamed(Routes.HOME);
-      CacheController.instance.setUserEmail(emailTextController.text);
-    }
+    await FirebaseAuthHelper()
+        .signIn(
+            email: emailTextController.text,
+            password: passwordTextController.text)
+        .then((String? userUid) async {
+      if (userUid != null) {
+        User? user = await FireStoreHelper().getUser(userUid);
+        await CacheController.instance.cacheLoggedInUser(user!.toJSON());
+        CacheController.instance.setAuthed(true);
+        CacheController.instance.setUserId(userUid);
+        Get.offNamed(Routes.HOME);
+      }
+    });
   }
 
   bool checkData() {

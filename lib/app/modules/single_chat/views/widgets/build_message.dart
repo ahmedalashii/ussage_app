@@ -19,7 +19,7 @@ class BuildMessage extends GetView<SingleChatController> {
         AnimationController(vsync: controller);
     Widget backgroundChild = Center(
       child: PrimaryText(
-        formatTimeOfDay(message.sendingTime),
+        formatTimeOfDay(message.createdAt),
         color: ColorManager.primary,
         fontSize: 20,
       ),
@@ -36,13 +36,13 @@ class BuildMessage extends GetView<SingleChatController> {
       children: [
         GestureDetector(
           onHorizontalDragStart: (DragStartDetails details) {
-            controller.onDragStart(details, animationController, message);
+            controller.onDragStart(animationController, message);
           },
           onHorizontalDragUpdate: (DragUpdateDetails details) {
             controller.onDragUpdate(details, animationController, message);
           },
           onHorizontalDragEnd: (DragEndDetails details) {
-            controller.onDragEnd(details, animationController, message);
+            controller.onDragEnd(animationController, message);
           },
           child: Stack(
             children: [

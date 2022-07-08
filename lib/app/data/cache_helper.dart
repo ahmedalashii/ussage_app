@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ussage_app/app/data/models/user.dart';
 
 class CacheController {
   CacheController._() {
@@ -31,12 +34,30 @@ class CacheController {
     return _sharedPreferences.getString('deviceId') ?? '';
   }
 
-  Future setUserId(int id) async {
-    await _sharedPreferences.setInt('userId', id);
+  Future setUserId(String id) async {
+    await _sharedPreferences.setString('userId', id);
   }
 
-  int getUserId() {
-    return _sharedPreferences.getInt('userId') ?? -1;
+  Future cacheLoggedInUser(Map<String, dynamic> loggedInUser) async {
+    await _sharedPreferences.setString(
+        "loggedInUser", jsonEncode(loggedInUser));
+  }
+
+  User? getCachedLoggedInUser() {
+    if (_sharedPreferences.getString("loggedInUser") != null) {
+      return User.fromJSON(
+          json.decode(_sharedPreferences.getString("loggedInUser")!)
+              as Map<String, dynamic>);
+    }
+    return null;
+  }
+
+  Future removeCachedLoggedInUser() async {
+    await _sharedPreferences.remove("loggedInUser");
+  }
+
+  String getUserId() {
+    return _sharedPreferences.getString('userId') ?? "";
   }
 
   Future setLangCode(String langCode) async {
@@ -59,12 +80,16 @@ class CacheController {
     await _sharedPreferences.setString('email', email);
   }
 
-  String getUserEmail() {
-    return _sharedPreferences.getString('email') ?? '';
+  Future setUserName(String name) async {
+    await _sharedPreferences.setString('name', name);
   }
 
-  void removeUserEmail() {
-    _sharedPreferences.remove("email");
+  String getUserName() {
+    return _sharedPreferences.getString('name') ?? '';
+  }
+
+  String getUserEmail() {
+    return _sharedPreferences.getString('email') ?? '';
   }
 
   Future setAvatarLink(String avatar) async {
@@ -73,7 +98,7 @@ class CacheController {
 
   String getAvatarLink() {
     return _sharedPreferences.getString('avatar') ??
-        "https://secure.gravatar.com/avatar/?s=96&d=mm&r=g";
+        "https://www.allprodad.com/wp-content/uploads/2021/03/05-12-21-happy-people.jpg";
   }
 
   Future setAuthed(bool authed) async {

@@ -2,16 +2,17 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 
-typedef UploadListener = void Function(
-    {required bool status,
-    required TaskState taskState,
-    String? message,
-    Reference? reference});
+typedef UploadListener = void Function({
+  required bool status,
+  required TaskState taskState,
+  String? message,
+  Reference? reference,
+});
 
 /*
   * Reference >> Represents a reference to a Google Cloud Storage object. Developers can upload, download, and delete objects, as well as get/set object metadata.
 */
-class FirebaseStorageController {
+class FirebaseStorageHelper {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   Future<void> uploadImage(
       {required File file, required UploadListener uploadListener}) async {

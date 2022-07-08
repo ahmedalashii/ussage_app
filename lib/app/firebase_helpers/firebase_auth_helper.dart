@@ -6,9 +6,9 @@ import 'package:ussage_app/constants/exports.dart';
 
 typedef UserAuthStatus = void Function({required bool loggedIn});
 
-class FirebaseAuthController {
+class FirebaseAuthHelper {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  Future<bool> signIn({required String email, required String password}) async {
+  Future<String?> signIn({required String email, required String password}) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
@@ -21,29 +21,29 @@ class FirebaseAuthController {
         //       colorText: ColorManager.red);
         //   return false;
         // }
-        return true;
+        return userCredential.user!.uid;
       }
     } on FirebaseAuthException catch (exception) {
       _controlException(exception);
     } catch (exception) {
       log("Exception : $exception");
     }
-    return false;
+    return null;
   }
 
-  Future<bool> createAccount(
+  Future<String?> createAccount(
       {required String email, required String password}) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
-      userCredential.user?.sendEmailVerification();
-      return true;
+      await userCredential.user!.sendEmailVerification();
+      return userCredential.user!.uid;
     } on FirebaseAuthException catch (exception) {
       _controlException(exception);
     } catch (exception) {
       log("Exception : $exception");
     }
-    return false;
+    return null;
   }
 
   bool loggedIn() => (_firebaseAuth.currentUser != null);

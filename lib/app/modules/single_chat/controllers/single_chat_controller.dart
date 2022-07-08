@@ -1,20 +1,20 @@
-import 'dart:developer';
-
+import 'package:ussage_app/app/data/cache_helper.dart';
 import 'package:ussage_app/app/modules/home/controllers/home_controller.dart';
 import 'package:ussage_app/constants/exports.dart';
 
-import '../../../../constants/dummy.dart' as dummy;
-import '../../../data/models/chat.dart';
 import '../../../data/models/message.dart';
+import '../../../data/models/user.dart';
+import '../../../firebase_helpers/firebase_firestore_helper.dart';
 
 class SingleChatController extends GetxController
     with GetTickerProviderStateMixin {
-  Chat chat = Get.arguments[0] as Chat;
+  // Chat chat = Get.arguments[0] as Chat;
+  User user = Get.arguments[0] as User;
 
   final HomeController homeController = Get.find();
   late ScrollController scrollController;
   late TextEditingController submittingMessageTextController;
-  double dragExtent = 0; // saving how much we've dragged to the left side ..
+  double dragExtent = 0;
   final double actionThreshold = 0;
   Size size = const Size(0, 0);
   late int noOfChatMessages;
@@ -22,8 +22,7 @@ class SingleChatController extends GetxController
 
   RxList<Message> tempMessages = <Message>[].obs;
 
-  void onDragStart(DragStartDetails details,
-      AnimationController animationController, Message message) {
+  void onDragStart(AnimationController animationController, Message message) {
     size = const Size(0, 0);
     message.size = size;
     dragExtent = 0;
@@ -34,10 +33,12 @@ class SingleChatController extends GetxController
   void onDragUpdate(DragUpdateDetails details,
       AnimationController animationController, Message message) {
     dragExtent += details.primaryDelta!;
-    if (dragExtent < 0 && message.sender.id != dummy.currentUser.id) {
+    if (dragExtent < 0 &&
+        message.senderIdUser != CacheController.instance.getUserId()) {
       return;
     }
-    if (dragExtent >= 0 && message.sender.id == dummy.currentUser.id) {
+    if (dragExtent >= 0 &&
+        message.senderIdUser == CacheController.instance.getUserId()) {
       return;
     }
     _onSlided(message);
@@ -45,8 +46,7 @@ class SingleChatController extends GetxController
     update();
   }
 
-  void onDragEnd(DragEndDetails details,
-      AnimationController animationController, Message message) {
+  void onDragEnd(AnimationController animationController, Message message) {
     animationController.value = 0.4;
     animationController.fling(velocity: -1).then((value) {
       message.size = const Size(0, 0);
@@ -65,23 +65,33 @@ class SingleChatController extends GetxController
     update();
   }
 
-  void sendMessage(Message message) {
-    tempMessages.insert(0, message);
-    chat.messages.add(message);
+  void sendMessage({required String idUser, required String msg}) {
+    Message message = Message(
+      senderIdUser: CacheController.instance.getUserId(),
+      receiverIdUser: idUser,
+      size: const Size(0, 0),
+      createdAt: DateTime.now(),
+      text: msg,
+    );
     submittingMessageTextController.clear();
     makeSendIconVisible(submittingMessageTextController.text);
+    FireStoreHelper().createMessage(receiverIdUser: idUser, message: message);
     update();
   }
 
   @override
   void onInit() {
-    noOfChatMessages = chat.messages.length; // 10
-    log(noOfChatMessages.toString());
+    // noOfChatMessages = chat.messages.length; // 10
+    // log(noOfChatMessages.toString());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      homeController.makeChatRead(Get.arguments[1] as int);
-      await fetchMessages();
-      // bool status = await FireStoreController().createChat(chat: chat);
-      // log("Status: $status");
+      if (user.lastMessages.containsKey(CacheController.instance.getUserId())) {
+        if (user.lastMessages[CacheController.instance.getUserId()]!
+                .senderIdUser !=
+            CacheController.instance.getUserId()) {
+          await homeController.makeUserRead(user);
+        }
+      }
+      // await fetchMessages();
     });
     scrollController = ScrollController();
     // scrollController.addListener(() async {
@@ -118,12 +128,12 @@ class SingleChatController extends GetxController
     if (noOfChatMessages >= 5) {
       for (int i = 0; i < 5; i++) {
         // tempMessages.insert(0, chat.messages[noOfChatMessages - i - 1]);
-        tempMessages.add(chat.messages[noOfChatMessages - i - 1]);
+        // tempMessages.add(chat.messages[noOfChatMessages - i - 1]);
       }
     } else {
       for (int i = 0; i < noOfChatMessages; i++) {
         // tempMessages.insert(0, chat.messages[noOfChatMessages - i - 1]);
-        tempMessages.add(chat.messages[noOfChatMessages - i - 1]);
+        // tempMessages.add(chat.messages[noOfChatMessages - i - 1]);
       }
     }
     update();
