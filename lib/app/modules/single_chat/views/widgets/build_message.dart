@@ -35,6 +35,7 @@ class BuildMessage extends GetView<SingleChatController> {
               : WrapAlignment.end,
       children: [
         GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onHorizontalDragStart: (DragStartDetails details) {
             controller.onDragStart(animationController, message);
           },

@@ -55,9 +55,9 @@ class SingleChatView extends GetView<SingleChatController> {
                                             .runtimeType ==
                                         String)
                                     ? DateTime.parse(usersMessages[index]
-                                        .get("createdAt") as String)
+                                        .get("createdAt") as String).toLocal()
                                     : toDateTime(
-                                        usersMessages[index].get("createdAt"))!,
+                                        usersMessages[index].get("createdAt"))!.toLocal(),
                                 senderIdUser:
                                     usersMessages[index].get("senderIdUser"),
                                 receiverIdUser:

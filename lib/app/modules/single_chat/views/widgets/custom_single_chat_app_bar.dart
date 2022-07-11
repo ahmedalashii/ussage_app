@@ -1,8 +1,8 @@
 import 'package:ussage_app/app/modules/single_chat/controllers/single_chat_controller.dart';
-import 'package:ussage_app/app/routes/app_pages.dart';
 import 'package:ussage_app/generated/locales.g.dart';
 
 import '../../../../../constants/exports.dart';
+import '../../../../data/cache_helper.dart';
 import '../../../../data/models/user.dart';
 
 class CustomSingleChatAppBar extends GetView<SingleChatController> {
@@ -18,8 +18,16 @@ class CustomSingleChatAppBar extends GetView<SingleChatController> {
     return Row(
       children: [
         IconButton(
-          onPressed: () {
-            Get.toNamed(Routes.HOME);
+          onPressed: () async {
+            if (user.lastMessages
+                .containsKey(CacheController.instance.getUserId())) {
+              if (user.lastMessages[CacheController.instance.getUserId()]!
+                      .senderIdUser !=
+                  CacheController.instance.getUserId()) {
+                await controller.homeController.makeUserRead(user);
+              }
+            }
+            Get.back();
           },
           icon: Icon(
             Icons.arrow_back_ios_rounded,
@@ -36,8 +44,7 @@ class CustomSingleChatAppBar extends GetView<SingleChatController> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
                 image: DecorationImage(
-                  image: NetworkImage(
-                      user.imageUrl),
+                  image: NetworkImage(user.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -52,7 +59,9 @@ class CustomSingleChatAppBar extends GetView<SingleChatController> {
                   fontSize: 20,
                 ),
                 PrimaryText(
-                  (user.connectionStatus) ? LocaleKeys.online.tr : LocaleKeys.not_online.tr,
+                  (user.connectionStatus)
+                      ? LocaleKeys.online.tr
+                      : LocaleKeys.not_online.tr,
                   color: ColorManager.primary,
                   fontSize: 18,
                 ),

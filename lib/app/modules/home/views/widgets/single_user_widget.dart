@@ -73,6 +73,7 @@ class SingleUser extends GetView<HomeController> {
       }),
     );
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onHorizontalDragStart: (DragStartDetails details) {
         controller.onDragStart(details, animationController, user);
       },
@@ -82,7 +83,7 @@ class SingleUser extends GetView<HomeController> {
       onHorizontalDragEnd: (DragEndDetails details) {
         controller.onDragEnd(details, animationController, user);
       },
-      onTap: () => Get.offNamed(Routes.SINGLE_CHAT, arguments: [user, index]),
+      onTap: () => Get.toNamed(Routes.SINGLE_CHAT, arguments: [user, index]),
       child: Stack(
         children: [
           AnimatedBuilder(
@@ -153,14 +154,12 @@ class SingleUser extends GetView<HomeController> {
                                     height: 20.h,
                                   ),
                                   const Spacer(),
-                                  if (CacheController.instance
-                                      .getCachedLoggedInUser()!
-                                      .lastMessages
-                                      .containsKey(user.idUser))
+                                  if (user.lastMessages.containsKey(
+                                      CacheController.instance.getUserId()))
                                     PrimaryText(
-                                      formatTimeOfDay(CacheController.instance
-                                          .getCachedLoggedInUser()!
-                                          .lastMessages[user.idUser]!
+                                      formatTimeOfDay(user
+                                          .lastMessages[CacheController.instance
+                                              .getUserId()]!
                                           .createdAt),
                                       color: ColorManager.grey3,
                                     ),

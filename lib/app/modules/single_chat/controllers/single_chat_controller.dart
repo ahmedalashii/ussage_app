@@ -70,7 +70,7 @@ class SingleChatController extends GetxController
       senderIdUser: CacheController.instance.getUserId(),
       receiverIdUser: idUser,
       size: const Size(0, 0),
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       text: msg,
     );
     submittingMessageTextController.clear();
